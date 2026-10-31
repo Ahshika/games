@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "updated": "2026-10-31T09:25:40.186Z",
+  "games": [
+    {
+      "id": "one-brain",
+      "name": "One Brain",
+      "family": "GAME",
+      "genre": "Puzzle",
+      "tagline": "A daily brain puzzle, plus an endless Challenge Path that keeps getting harder.",
+      "points": [
+        "The daily puzzle is generated from the date, so every player gets the same one with no server. 8 procedural puzzle types (logic, math, memory, pattern, visual, sequence, spatial, word) across 5 difficulty tiers.",
+        "Stages of 10 levels that tighten the rules (fewer attempts, a clock, no hints, boss levels); after stage 10 the game creates its own themed stages. AdMob with a polite frequency cap, Play Billing 8, Arabic RTL and dark mode."
+      ],
+      "platforms": [
+        "ANDROID"
+      ],
+      "tech": [
+        "Java",
+        "Android SDK",
+        "Material 3",
+        "MVVM",
+        "AdMob",
+        "Play Billing"
+      ],
+      "version": "v1.0.0",
+      "releaseDate": "2026-10-08",
+      "status": "Released",
+      "repo": "https://github.com/Ahshika/One-Brain",
+      "downloads": [
+        {
+          "label": "Android (APK)",
+          "url": "https://github.com/Ahshika/One-Brain/releases/download/v1.0.0/OneBrain-1.0.0.apk"
+        }
+      ],
+      "source": "ada",
+      "featured": true
+    }
+  ]
+}
