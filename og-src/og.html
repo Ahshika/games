@@ -1,0 +1,76 @@
+<!doctype html>
+<!-- Source of og.png (1200×630 link preview). Rendered with headless Chrome:
+     chrome --headless=new --screenshot=og.png --window-size=1200,630 og-src/og.html
+     It reads ../data/games.json, so the card always shows the current featured game. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800;900&family=Rajdhani:wght@600;700&display=block" rel="stylesheet">
+<style>
+  *{box-sizing:border-box} html,body{margin:0}
+  body{width:1200px; height:630px; overflow:hidden; background:#04050a; color:#eaf2ff; font-family:'Rajdhani',sans-serif; position:relative}
+  .grid{position:absolute; inset:0; background-image:radial-gradient(#8c97b322 1.4px,transparent 1.6px); background-size:30px 30px}
+  .glow{position:absolute; inset:0; background:radial-gradient(60% 80% at 22% 50%,var(--glow),transparent 70%)}
+  .case{position:absolute; left:70px; top:65px; width:375px; height:500px; overflow:hidden; border:2px solid var(--line); clip-path:polygon(22px 0,100% 0,100% calc(100% - 22px),calc(100% - 22px) 100%,0 100%,0 22px); transform:perspective(1200px) rotateY(14deg); box-shadow:0 40px 80px -30px var(--acc)}
+  .case svg{width:100%; height:100%; display:block}
+  .plate{position:absolute; left:0; right:0; bottom:0; padding:70px 22px 22px; background:linear-gradient(transparent,#04050af2)}
+  .plate b{display:block; font:900 34px 'Orbitron',sans-serif; text-transform:uppercase}
+  .plate span{font:700 15px 'Rajdhani'; letter-spacing:.3em; color:var(--acc); text-transform:uppercase}
+  .tag{position:absolute; left:18px; top:18px; padding:5px 10px; font:900 12px 'Orbitron'; letter-spacing:.2em; color:#04050a; background:#b6ff3e}
+  .right{position:absolute; left:520px; right:60px; top:96px}
+  .hud{font:700 18px 'Rajdhani'; letter-spacing:.34em; color:#3ef0ff; text-transform:uppercase}
+  h1{font:900 84px/1 'Orbitron',sans-serif; margin:18px 0 14px; letter-spacing:.01em; white-space:nowrap}
+  h1 b{color:#3ef0ff}
+  .sub{font:700 25px 'Rajdhani'; letter-spacing:.1em; color:#c9d3ea; text-transform:uppercase; white-space:nowrap}
+  .row{display:flex; gap:12px; margin-top:34px}
+  .chip{padding:9px 16px; font:700 18px 'Rajdhani'; letter-spacing:.18em; text-transform:uppercase; border:1px solid #ffffff2e; background:#ffffff0a}
+  .press{position:absolute; left:520px; bottom:70px; font:900 26px 'Orbitron'; letter-spacing:.3em; color:#b6ff3e}
+  .url{position:absolute; right:60px; bottom:76px; font:700 20px 'Rajdhani'; letter-spacing:.16em; color:#8c97b3}
+</style>
+</head>
+<body>
+<div class="grid"></div><div class="glow"></div>
+<div class="case" id="case"><span class="tag">Featured</span><div class="plate"><b id="name"></b><span id="genre"></span></div></div>
+<div class="right">
+  <div class="hud">Player 1 · Ahmed Hassan</div>
+  <h1>AH<b>//</b>GAMES</h1>
+  <div class="sub">Pick a title · read the briefing · play</div>
+  <div class="row" id="chips"></div>
+</div>
+<div class="press">PRESS START</div>
+<div class="url">ahshika.github.io/games</div>
+<script>
+// Same key-art generator as the site, so the preview matches what visitors see.
+function hash(s){ let h = 2166136261; for(const ch of s){ h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rng(seed){ let x = seed || 1; return () => (x = Math.imul(x ^ (x >>> 15), 2246822519) ^ Math.imul(x ^ (x >>> 13), 3266489917), ((x ^= x >>> 16) >>> 0) / 4294967296); }
+const hueOf = g => hash(g.id + g.name) % 360;
+function keyArt(g, w, h){
+  const r = rng(hash(g.name + g.genre)), hue = hueOf(g);
+  let rings = '', shards = '';
+  const cx = w * (0.35 + r() * 0.3), cy = h * (0.3 + r() * 0.25);
+  for(let i = 0; i < 6; i++) rings += `<circle cx="${cx}" cy="${cy}" r="${(40 + i * 46).toFixed(0)}" fill="none" stroke="hsl(${hue} 100% 70%)" stroke-opacity="${(0.32 - i * 0.045).toFixed(2)}" stroke-width="${i % 2 ? 1 : 2}" stroke-dasharray="${i % 2 ? '4 10' : 'none'}"/>`;
+  for(let i = 0; i < 18; i++){
+    const x = r() * w, y = r() * h, s = 10 + r() * 70, a = r() * 360;
+    shards += `<polygon points="0,${-s} ${s*0.6},${s*0.5} ${-s*0.6},${s*0.5}" transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${a.toFixed(0)})" fill="hsl(${(hue + i * 21) % 360} 100% ${55 + r()*20}%)" opacity="${(0.08 + r()*0.3).toFixed(2)}"/>`;
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="k" cx="${(cx/w).toFixed(2)}" cy="${(cy/h).toFixed(2)}" r="0.9"><stop offset="0" stop-color="hsl(${hue} 90% 32%)"/><stop offset=".55" stop-color="hsl(${(hue+40)%360} 80% 12%)"/><stop offset="1" stop-color="#05060c"/></radialGradient></defs><rect width="${w}" height="${h}" fill="url(#k)"/>${rings}${shards}<circle cx="${cx}" cy="${cy}" r="26" fill="hsl(${hue} 100% 75%)" opacity=".9"/></svg>`;
+}
+const PLATFORM = {WINDOWS:'Windows', MACOS:'macOS', LINUX:'Linux', ANDROID:'Android', IOS:'iOS', WEB:'Web', CONSOLE:'Console'};
+fetch('../data/games.json').then(r => r.json()).then(d => {
+  const games = d.games.filter(g => g.family === 'GAME');
+  const g = games.find(x => x.featured) || games[0];
+  const hue = hueOf(g);
+  document.body.style.setProperty('--acc', `hsl(${hue} 100% 64%)`);
+  document.body.style.setProperty('--line', `hsl(${hue} 100% 64% / .55)`);
+  document.body.style.setProperty('--glow', `hsl(${hue} 100% 55% / .22)`);
+  document.getElementById('case').insertAdjacentHTML('afterbegin', keyArt(g, 375, 500));
+  document.getElementById('name').textContent = g.name;
+  document.getElementById('genre').textContent = g.genre;
+  const n = games.length;
+  document.getElementById('chips').innerHTML = [`${n} title${n === 1 ? '' : 's'}`, ...new Set(games.flatMap(x => x.platforms).map(p => PLATFORM[p] || p))]
+    .map(t => `<span class="chip">${t}</span>`).join('');
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

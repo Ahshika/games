@@ -6,6 +6,16 @@
 <title>AH//GAMES — Game Select</title>
 <meta name="description" content="The games of Ahmed Hassan: pick a title, read the briefing, download and play.">
 <meta name="theme-color" content="#04050a">
+<link rel="canonical" href="https://ahshika.github.io/games/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ahshika.github.io/games/">
+<meta property="og:title" content="AH//GAMES — Games by Ahmed Hassan">
+<meta property="og:description" content="Game select: pick a title, read the briefing, download and play. Featuring One Brain, a daily puzzle game for Android.">
+<meta property="og:image" content="https://ahshika.github.io/games/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath d=%27M10 0h54v54l-10 10H0V10z%27 fill=%27%2304050a%27/%3E%3Cpath d=%27M18 20h28a12 12 0 0 1 11 16l-3 9a7 7 0 0 1-12 2l-4-5H26l-4 5a7 7 0 0 1-12-2l-3-9a12 12 0 0 1 11-16z%27 fill=%27%233ef0ff%27/%3E%3Ccircle cx=%2744%27 cy=%2730%27 r=%273%27 fill=%27%2304050a%27/%3E%3Cpath d=%27M20 30h8M24 26v8%27 stroke=%27%2304050a%27 stroke-width=%273%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -44,6 +54,38 @@
   .press{font:800 clamp(16px,2.2vw,22px) var(--display); letter-spacing:.3em; color:var(--ok); background:none; border:0; cursor:pointer; animation:blink 1.1s infinite steps(1)}
   @keyframes blink{50%{opacity:.15}}
   .boot-hint{margin-top:16px; font-size:13px; letter-spacing:.2em; color:var(--faint); text-transform:uppercase}
+  /* launch sequence after PRESS START: confirm → load log → hyperspace → flash → entrance */
+  .boot-stage{position:relative; z-index:2}
+  #warp{position:absolute; inset:0; width:100%; height:100%; z-index:1; pointer-events:none}
+  #boot.go .press{animation:confirm .12s 3 steps(1); color:#04050a; background:var(--ok); padding:6px 18px}
+  @keyframes confirm{50%{opacity:0}}
+  .boot-log{display:none; width:min(560px,86vw); text-align:start; font:700 clamp(13px,1.6vw,16px) var(--display); letter-spacing:.12em; color:var(--ok)}
+  #boot.loading .boot-intro{display:none}
+  #boot.loading .boot-log{display:block}
+  .boot-log p{margin:0 0 12px; min-height:1.2em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 0 12px #b6ff3e66}
+  .boot-log p.cursor::after{content:'_'; animation:blink .5s infinite steps(1)}
+  .bar{display:grid; grid-template-columns:repeat(12,1fr); gap:5px; margin:6px 0 16px}
+  .bar i{height:16px; background:#ffffff12; transform:skewX(-14deg)}
+  .bar i.on{background:var(--ok); box-shadow:0 0 14px #b6ff3e99}
+  #boot.warp{background:#04050a}
+  #boot.warp .boot-log{opacity:0; transform:scale(1.5); filter:blur(4px); transition:opacity .35s, transform .6s, filter .6s}
+  /* soft burst in the game colour (no full-screen white flash) */
+  #flash{position:fixed; inset:0; z-index:60; pointer-events:none; background:radial-gradient(circle at 50% 50%,#ffffffb3 0,hsl(var(--hue) 100% 70% / .45) 22%,transparent 62%); animation:flash .38s ease-out forwards}
+  @keyframes flash{from{opacity:.85; transform:scale(.6)} to{opacity:0; transform:scale(1.6)}}
+  body.entering .hud{animation:hudIn .55s cubic-bezier(.2,.8,.2,1) both}
+  body.entering .case{animation:caseIn .85s .08s cubic-bezier(.2,.8,.2,1) both}
+  body.entering .brief > *{animation:riseIn .5s cubic-bezier(.2,.8,.2,1) both}
+  body.entering .brief > :nth-child(2){animation-delay:.14s}
+  body.entering .brief > :nth-child(3){animation-delay:.22s}
+  body.entering .brief > :nth-child(4){animation-delay:.3s}
+  body.entering .brief > :nth-child(5){animation-delay:.4s}
+  body.entering .brief > :nth-child(6){animation-delay:.5s}
+  body.entering .select{animation:riseIn .6s .55s cubic-bezier(.2,.8,.2,1) both}
+  body.entering .controls, body.entering footer{animation:fadeIn .6s .75s both}
+  @keyframes hudIn{from{transform:translateY(-110%); opacity:0}}
+  @keyframes caseIn{from{transform:translateX(-55vw) rotateY(75deg) scale(.55); opacity:0}}
+  @keyframes riseIn{from{transform:translateY(34px); opacity:0}}
+  @keyframes fadeIn{from{opacity:0}}
 
   /* ---------- HUD ---------- */
   .hud{position:relative; z-index:10; display:flex; align-items:center; gap:18px; padding:16px clamp(16px,3vw,36px); text-transform:uppercase; letter-spacing:.12em}
@@ -157,11 +199,19 @@
 <div class="scan" aria-hidden="true"></div>
 
 <div id="boot" role="dialog" aria-modal="true" aria-label="Start screen">
-  <div>
-    <div class="boot-logo" data-text="AH//GAMES">AH<b>//</b>GAMES</div>
-    <div class="boot-sub">Games by Ahmed Hassan</div>
-    <button class="press" id="press" type="button">PRESS START</button>
-    <div class="boot-hint">Any key · click · Ⓐ on a gamepad</div>
+  <canvas id="warp" aria-hidden="true"></canvas>
+  <div class="boot-stage">
+    <div class="boot-intro">
+      <div class="boot-logo" data-text="AH//GAMES">AH<b>//</b>GAMES</div>
+      <div class="boot-sub">Games by Ahmed Hassan</div>
+      <button class="press" id="press" type="button">PRESS START</button>
+      <div class="boot-hint">Any key · click · Ⓐ on a gamepad</div>
+    </div>
+    <div class="boot-log" aria-live="polite">
+      <p id="l1"></p><p id="l2"></p>
+      <div class="bar" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <p id="l3"></p>
+    </div>
   </div>
 </div>
 
@@ -263,9 +313,86 @@ syncSound();
 
 /* ---------- boot screen ---------- */
 const boot = $('#boot');
-function start(){ if(boot.hidden) return; boot.hidden = true; try { sessionStorage.setItem('ah-games-booted', '1'); } catch {} blip(520, .06); setTimeout(() => blip(880, .1), 70); $('#strip [aria-current="true"]')?.focus({preventScroll:true}); }
+let starting = false, skipping = false;
+let markReady; const dataReady = new Promise(r => markReady = r);
+const wait = ms => new Promise(r => setTimeout(r, skipping ? 0 : ms));
+
+async function typeLine(el, text){
+  el.classList.add('cursor');
+  for(let i = 1; i <= text.length; i++){
+    if(skipping){ el.textContent = text; break; }
+    el.textContent = text.slice(0, i);
+    if(i % 3 === 0) blip(1100 + (i % 7) * 60, .015);
+    await wait(16);
+  }
+  el.classList.remove('cursor');
+}
+
+/* hyperspace: stars streak out from the centre, accelerating, in the featured game's colour */
+function warp(ms){
+  return new Promise(resolve => {
+    if(skipping) return resolve();
+    // Browsers pause animation frames in background tabs: never wait on them longer than the effect lasts.
+    let finished = false; const done = () => { if(!finished){ finished = true; resolve(); } };
+    setTimeout(done, ms + 300);
+    const cv = $('#warp'), ctx = cv.getContext('2d'), dpr = Math.min(devicePixelRatio || 1, 2);
+    const w = cv.width = innerWidth * dpr, h = cv.height = innerHeight * dpr, cx = w / 2, cy = h / 2, far = Math.hypot(w, h) / 2;
+    const hue = GAMES[0] ? hueOf(GAMES[0]) : 265;
+    const stars = Array.from({length: 340}, () => ({a: Math.random() * 6.283, r: Math.random() * 60 * dpr, v: .4 + Math.random() * 1.6}));
+    const t0 = performance.now();
+    (function frame(now){
+      const p = Math.min(1, (now - t0) / ms), speed = (1.5 + p * p * 70) * dpr;
+      ctx.fillStyle = 'rgba(4,5,10,.32)'; ctx.fillRect(0, 0, w, h);
+      for(const s of stars){
+        const r0 = s.r; s.r += s.v * speed;
+        ctx.strokeStyle = `hsla(${(hue + s.v * 50) % 360},100%,${68 + p * 28}%,${(.3 + p * .65).toFixed(2)})`;
+        ctx.lineWidth = (.8 + p * 2.4) * dpr;
+        ctx.beginPath(); ctx.moveTo(cx + Math.cos(s.a) * r0, cy + Math.sin(s.a) * r0); ctx.lineTo(cx + Math.cos(s.a) * s.r, cy + Math.sin(s.a) * s.r); ctx.stroke();
+        if(s.r > far) s.r = Math.random() * 30 * dpr;
+      }
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, (40 + p * 260) * dpr);
+      glow.addColorStop(0, `hsla(${hue},100%,85%,${(.15 + p * .6).toFixed(2)})`); glow.addColorStop(1, 'transparent');
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, w, h);
+      if(p < 1 && !skipping && !finished) requestAnimationFrame(frame); else done();
+    })(t0);
+  });
+}
+
+function enter(){
+  boot.hidden = true; boot.className = '';
+  if(!reduced){
+    const f = document.createElement('div'); f.id = 'flash'; document.body.append(f); setTimeout(() => f.remove(), 450);
+    document.body.classList.add('entering'); setTimeout(() => document.body.classList.remove('entering'), 1800);
+  }
+  $('#strip [aria-current="true"]')?.focus({preventScroll:true});
+}
+
+/* PRESS START → confirm → load log (real title count) → hyperspace → flash → entrance. Any input skips. */
+async function start(){
+  if(boot.hidden) return;
+  if(starting){ skipping = true; return; }
+  starting = true;
+  try { sessionStorage.setItem('ah-games-booted', '1'); } catch {}
+  setTimeout(() => { if(!boot.hidden){ skipping = true; enter(); } }, 6000); // hard cap: the start screen can never trap the visitor
+  if(reduced){ enter(); return; }
+  boot.classList.add('go'); blip(520, .06); setTimeout(() => blip(880, .1), 70);
+  await wait(400);
+  boot.classList.add('loading');
+  await Promise.race([dataReady, new Promise(r => setTimeout(r, 1500))]);
+  const n = GAMES.length;
+  await typeLine($('#l1'), '> PLAYER 1 · AHMED HASSAN');
+  await typeLine($('#l2'), `> LOADING ${n} TITLE${n === 1 ? '' : 'S'}`);
+  for(const [i, seg] of [...document.querySelectorAll('.bar i')].entries()){ seg.classList.add('on'); blip(300 + i * 55, .03); await wait(45); }
+  await typeLine($('#l3'), '> GAME SELECT · READY');
+  await wait(260);
+  boot.classList.add('warp'); blip(160, .55, 'sawtooth');
+  await warp(850);
+  blip(990, .12);
+  enter();
+}
 let booted = false; try { booted = sessionStorage.getItem('ah-games-booted') === '1'; } catch {}
-if(booted) boot.hidden = true; else $('#press').focus();
+if(booted){ boot.hidden = true; if(!reduced){ document.body.classList.add('entering'); setTimeout(() => document.body.classList.remove('entering'), 1800); } }
+else $('#press').focus();
 boot.addEventListener('click', start);
 addEventListener('keydown', e => { if(!boot.hidden && !e.ctrlKey && !e.metaKey && !e.altKey){ e.preventDefault(); start(); } }, true);
 
@@ -345,6 +472,7 @@ function select(i, focus = false){
 function applyMode(){ view = GAMES.filter(g => !mode.genre || g.genre === mode.genre); sel = 0; renderStrip(); renderStage(); }
 
 document.addEventListener('click', e => {
+  if(!(e.target instanceof Element)) return;
   const c = e.target.closest('.cart'); if(c){ select(Number(c.dataset.i)); return; }
   const m = e.target.closest('.mode-btn'); if(m){ mode.genre = m.dataset.mode; applyMode(); blip(700, .05); }
 });
@@ -429,9 +557,11 @@ async function load(){
       .sort((a, b) => Number(!!b.featured) - Number(!!a.featured) || String(b.releaseDate || '').localeCompare(String(a.releaseDate || '')));
   } catch {
     $('#stage').innerHTML = '<p class="msg">Could not load the games. Please reload the page.</p>';
+    markReady();
     return;
   }
   applyMode();
+  markReady();
 }
 load();
 </script>
